@@ -4,15 +4,19 @@ const slides = document.querySelectorAll('.slide');
 const dots = document.querySelectorAll('.slider-dot');
 
 function showSlide(index) {
+    if (slides.length === 0) return; // Exit if no slides
+
     slides.forEach(slide => slide.classList.remove('active'));
     dots.forEach(dot => dot.classList.remove('active'));
-    
+
     currentSlide = index;
     if (currentSlide >= slides.length) currentSlide = 0;
     if (currentSlide < 0) currentSlide = slides.length - 1;
-    
+
     slides[currentSlide].classList.add('active');
-    dots[currentSlide].classList.add('active');
+    if (dots[currentSlide]) {
+        dots[currentSlide].classList.add('active');
+    }
 }
 
 function nextSlide() {
@@ -37,14 +41,14 @@ function stopSlider() {
 if (slides.length > 0) {
     showSlide(0);
     startSlider();
-    
+
     // Pause on hover
     const heroSlider = document.querySelector('.hero-slider');
     if (heroSlider) {
         heroSlider.addEventListener('mouseenter', stopSlider);
         heroSlider.addEventListener('mouseleave', startSlider);
     }
-    
+
     // Dot navigation
     dots.forEach((dot, index) => {
         dot.addEventListener('click', () => {
@@ -59,7 +63,7 @@ if (slides.length > 0) {
 const mobileToggle = document.querySelector('.mobile-toggle');
 const navMenu = document.querySelector('.nav-menu');
 
-if (mobileToggle) {
+if (mobileToggle && navMenu) {
     mobileToggle.addEventListener('click', () => {
         navMenu.classList.toggle('active');
     });
@@ -69,7 +73,9 @@ if (mobileToggle) {
 const navLinks = document.querySelectorAll('.nav-menu a');
 navLinks.forEach(link => {
     link.addEventListener('click', () => {
-        navMenu.classList.remove('active');
+        if (navMenu) {
+            navMenu.classList.remove('active');
+        }
     });
 });
 
@@ -127,7 +133,7 @@ amountOptions.forEach(option => {
     option.addEventListener('click', () => {
         amountOptions.forEach(opt => opt.classList.remove('selected'));
         option.classList.add('selected');
-        
+
         if (customAmountInput) {
             customAmountInput.value = '';
         }
@@ -145,24 +151,24 @@ const donationForm = document.getElementById('donation-form');
 if (donationForm) {
     donationForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        
+
         const name = document.getElementById('donor-name').value;
         const email = document.getElementById('donor-email').value;
         const phone = document.getElementById('donor-phone').value;
-        
+
         let selectedAmount = document.querySelector('.amount-option.selected');
         let amount = selectedAmount ? selectedAmount.dataset.amount : customAmountInput.value;
-        
+
         if (!amount || amount <= 0) {
             alert('Please select or enter a donation amount');
             return;
         }
-        
+
         if (!name || !email || !phone) {
             alert('Please fill in all required fields');
             return;
         }
-        
+
         // In a real application, this would process the payment
         alert(`Thank you ${name} for your generous donation of ₹${amount}! This is a demo - in production, this would process your payment securely.`);
         donationForm.reset();
